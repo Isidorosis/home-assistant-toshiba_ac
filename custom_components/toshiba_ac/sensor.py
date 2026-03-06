@@ -171,6 +171,6 @@ class ToshibaEngineeringSensor(ToshibaAcEntity, SensorEntity):
     def native_value(self):
         val = getattr(self._device, self._attr_key, None)
         # Filter out the 'Idle/Off' codes (127/254) so graphs look clean
-        if (val is None or val == 127 or val == 254)
+        if val is None or val == 127 or val == 254:
             return 0
         return val
