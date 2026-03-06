@@ -39,12 +39,12 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
 
         # --- NEW: Add the 9 Custom Engineering Sensors ---
         new_entities.extend([
-            ToshibaEngineeringSensor(device, "ac_compressor_hz", "Compressor Speed", "mdi:engine", UnitOfFrequency.HERTZ, None),
-            ToshibaEngineeringSensor(device, "ac_discharge_temp", "Discharge Temp", "mdi:thermometer-high", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
-            ToshibaEngineeringSensor(device, "ac_suction_temp", "Suction Temp", "mdi:thermometer-low", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
-            ToshibaEngineeringSensor(device, "ac_outdoor_coil_temp", "Outdoor Coil Temp", "mdi:heating-coil", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
-            ToshibaEngineeringSensor(device, "ac_indoor_coil_inlet_temp", "Indoor Coil Inlet Temp", "mdi:air-filter", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
-            ToshibaEngineeringSensor(device, "ac_indoor_coil_outlet_temp", "Indoor Coil Outlet Temp", "mdi:air-purifier", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_compressor_hz", "Compressor Speed", "mdi:engine", "Hz", None),
+            ToshibaEngineeringSensor(device, "ac_discharge_temp", "Discharge Temp", "mdi:thermometer-high", "°C", "temperature"),
+            ToshibaEngineeringSensor(device, "ac_suction_temp", "Suction Temp", "mdi:thermometer-low", "°C", "temperature"),
+            ToshibaEngineeringSensor(device, "ac_outdoor_coil_temp", "Outdoor Coil Temp", "mdi:heating-coil", "°C", "temperature"),
+            ToshibaEngineeringSensor(device, "ac_indoor_coil_inlet_temp", "Indoor Coil Inlet Temp", "mdi:air-filter", "°C", "temperature"),
+            ToshibaEngineeringSensor(device, "ac_indoor_coil_outlet_temp", "Indoor Coil Outlet Temp", "mdi:air-purifier", "°C", "temperature"),
             ToshibaEngineeringSensor(device, "ac_outdoor_fan_speed", "Outdoor Fan Speed", "mdi:fan", "step", None),
             ToshibaEngineeringSensor(device, "ac_indoor_fan_speed", "Indoor Fan Speed", "mdi:fan", "step", None),
             ToshibaEngineeringSensor(device, "ac_expansion_valve_pulse", "Expansion Valve", "mdi:valve", "pulse", None),
