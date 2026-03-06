@@ -155,19 +155,22 @@ class ToshibaEngineeringSensor(ToshibaAcEntity, SensorEntity):
         """Return a unique ID."""
         return f"{self._device.ac_id}_{self._attr_key}"
 
-    @property
-    def native_value(self):
-        """Return the state of the sensor from the device object."""
-        val = getattr(self._device, self._attr_key, None)
-        # Filter out the 'Idle/Off' codes from Toshiba
-        if val in [127, 254, None]:
-            return 0
-        return val
-
     async def async_added_to_hass(self):
-        """Register callbacks to update the sensor when the device state changes."""
-        self._device.on_state_changed_callback.add(self.async_write_ha_state)
+        """Register callbacks."""
+        self._device.on_state_changed_callback.add(self._update_callback)
 
     async def async_will_remove_from_hass(self):
-        """Cleanup callback when the sensor is removed."""
-        self._device.on_state_changed_callback.remove(self.async_write_ha_state)
+        """Cleanup callback."""
+        self._device.on_state_changed_callback.remove(self._update_callback)
+
+    def _update_callback(self, device):
+        """Handle device state changes safely across threads."""
+        self.hass.add_job(self.async_write_ha_state)
+
+    @property
+    def native_value(self):
+        val = getattr(self._device, self._attr_key, None)
+        # Filter out the 'Idle/Off' codes (127/254) so graphs look clean
+        if (val is None or val == 127 or val == 254)
+            return 0
+        return val
