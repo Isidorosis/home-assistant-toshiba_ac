@@ -37,6 +37,19 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
         # Outdoor temperature sensor - value may be None when outdoor unit is off
         new_entities.append(ToshibaTempSensor(device))
 
+        # --- NEW: Add the 9 Custom Engineering Sensors ---
+        new_entities.extend([
+            ToshibaEngineeringSensor(device, "ac_compressor_hz", "Compressor Speed", "mdi:engine", UnitOfFrequency.HERTZ, None),
+            ToshibaEngineeringSensor(device, "ac_discharge_temp", "Discharge Temp", "mdi:thermometer-high", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_suction_temp", "Suction Temp", "mdi:thermometer-low", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_outdoor_coil_temp", "Outdoor Coil Temp", "mdi:heating-coil", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_indoor_coil_inlet_temp", "Indoor Coil Inlet Temp", "mdi:air-filter", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_indoor_coil_outlet_temp", "Indoor Coil Outlet Temp", "mdi:air-purifier", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE),
+            ToshibaEngineeringSensor(device, "ac_outdoor_fan_speed", "Outdoor Fan Speed", "mdi:fan", "step", None),
+            ToshibaEngineeringSensor(device, "ac_indoor_fan_speed", "Indoor Fan Speed", "mdi:fan", "step", None),
+            ToshibaEngineeringSensor(device, "ac_expansion_valve_pulse", "Expansion Valve", "mdi:valve", "pulse", None),
+        ])
+
     if new_entities:
         _LOGGER.info("Adding %d sensor entities", len(new_entities))
         async_add_devices(new_entities)
@@ -118,3 +131,31 @@ class ToshibaTempSensor(ToshibaAcStateEntity, SensorEntity):
     def native_value(self) -> int | None:
         """Return the value reported by the sensor."""
         return self._device.ac_outdoor_temperature
+
+class ToshibaEngineeringSensor(ToshibaAcEntity, SensorEntity):
+    """Representation of a Toshiba AC Engineering Sensor."""
+
+    def __init__(self, device, attr_key, name_suffix, icon, unit, device_class):
+        """Initialize the generic sensor."""
+        super().__init__(device)
+        self._attr_key = attr_key
+        self._name_suffix = name_suffix
+        self._attr_icon = icon
+        self._attr_native_unit_of_measurement = unit
+        self._attr_device_class = device_class
+        self._attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return f"{self._device.name} {self._name_suffix}"
+
+    @property
+    def unique_id(self):
+        """Return a unique ID."""
+        return f"{self._device.ac_id}_{self._attr_key}"
+
+    @property
+    def native_value(self):
+        """Return the state of the sensor from the device object."""
+        return getattr(self._device, self._attr_key, None)
