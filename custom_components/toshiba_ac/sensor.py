@@ -158,4 +158,16 @@ class ToshibaEngineeringSensor(ToshibaAcEntity, SensorEntity):
     @property
     def native_value(self):
         """Return the state of the sensor from the device object."""
-        return getattr(self._device, self._attr_key, None)
+        val = getattr(self._device, self._attr_key, None)
+        # Filter out the 'Idle/Off' codes from Toshiba
+        if val in [127, 254, None]:
+            return 0
+        return val
+
+    async def async_added_to_hass(self):
+        """Register callbacks to update the sensor when the device state changes."""
+        self._device.on_state_changed_callback.add(self.async_write_ha_state)
+
+    async def async_will_remove_from_hass(self):
+        """Cleanup callback when the sensor is removed."""
+        self._device.on_state_changed_callback.remove(self.async_write_ha_state)
