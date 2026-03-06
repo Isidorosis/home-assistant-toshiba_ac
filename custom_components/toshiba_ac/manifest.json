@@ -15,6 +15,6 @@
     "janus==1.0.0"
   ],
   "ssdp": [],
-  "version": "2026.1.0",
+  "version": "2026.3.0",
   "zeroconf": []
 }
